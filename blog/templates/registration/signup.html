@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+</head>
+<body>
+  <div class="signup-form">
+    <a class="navbrand" href="/">
+      <img src="{% static "images/logo.jpg" %}" height="80" width="250" alt="Website-logo">
+    </a>
+    <hr>
+    <h2>Sign Up Form</h2>
+    <form enctype="multipart/form-data" class="sign-up" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <br>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</body>

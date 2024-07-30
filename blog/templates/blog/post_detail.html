@@ -1,0 +1,78 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block content %}
+<article class='post'>
+  <aside class="actions">
+    {% if user.is_authenticated and request.user == post.user %}
+    <button type="button" class="edit-post"><a class = "edit" href="{% url 'post_edit' slug=post.slug %}">
+
+        {% include './icons/pencil-fill.svg' %}
+      Edit</a>
+    </button>
+    <button type="button" class="delete-post"><a class="delete" href="{% url 'post_delete' slug=post.slug %}">
+      <i class="fa-solid fa-xmark"></i> Delete</a>
+    </button>
+    {% endif %}
+  </aside>
+  <h2>{{ post.title }}</h2>
+  <p>By: 
+    <a href="{% url 'profile' username=post.user.username %}">{{post.user}}</a> | {{post.published_date}}</p>
+  <hr>
+  {% if post.image %}
+  <img class="image" src='{{post.image.url}}'>
+  {% endif %}
+  <br>
+  
+  <p>{{post.text|safe}}</p>
+  <br>
+  {% for tag in post.tag.all %}
+  <a href="#">#{{ tag.title }}</a>
+  {% endfor %}
+  <br><br>
+  <form method="POST" action="{% url 'liked_post' slug=post.slug %}">
+    {% csrf_token %}
+    <button type="submit" name="post_id" value="{{ post.id }}">Likes</button> - {{total_likes}} likes
+  </form>
+</article>
+
+<div id="comment-section">
+  <button class="post-comment-button" type="button"><a class="add-comment" href="{% url 'add_comment_to_post' slug=post.slug %}">
+    <i class="fa-solid fa-comment"></i>
+     Add comment</a></button>
+  <br><br>
+  {% for comment in comments.all reversed %}
+  <strong>{{comment.user}} -
+        {{comment.created_date}}
+  </strong>
+  <br>
+  <p>{{comment.text|linebreaksbr}}</p>
+  <button onclick="HideShowReply()">Reply {{comment.reply_set.count}}</button>
+  <div class="reply_comment hide">
+    {% if comment.reply_set %}
+      {% for reply in comment.reply_set.all %}
+    <strong>{{reply.user}} -
+          {{reply.published_date}}
+    </strong>
+      <p>{{reply.text}}</p>
+      {% endfor %}
+    {% endif %}
+  </div>
+  
+  <br><br>
+  <form method="POST" action="{% url 'reply' slug=post.slug %}">
+    <input type="hidden" name="comment_id" value="{{comment.id}}">
+    {% csrf_token %}
+    {{ reply_form }}
+    <button type="submit">submit</button>
+  </form>
+
+  <hr>
+{% empty %}
+<p>No comments here yet :(</p>
+{% endfor %}
+
+</div>
+
+
+{% endblock %}

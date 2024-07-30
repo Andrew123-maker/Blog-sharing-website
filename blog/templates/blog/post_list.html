@@ -1,0 +1,62 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block content %}
+<header class="intro">Welcome to this website. This site is used for view or post anything related to mathmatic, science, computer, etc. If this is your first time visit the site, click admin to <a class="admin" href="{%url 'login'%}">login</a> or <a class="admin" href='{% url 'signup' %}'>Sign in</a>.</header>
+<aside class="sidebar">
+  <div class="search">
+      <form action="#">
+          <input type="text" placeholder="Search blogs" name="BlogSearch">
+          <button>
+              <i class="fa fa-search" style="font-size: 18px;"></i>
+          </button>
+      </form>
+  </div>
+  <div class="most-comments">
+    <h1>Most Comments</h1>
+    {% for post in comments_posts %}
+    <ul>
+      <li><a href="{{post.get_absolute_url}}">{{post.title}}</a></li>
+    </ul>
+    {% endfor %}
+  </div>
+  <div class="most-likes">
+    <h1>Most likes</h1>
+    {% for post in likes_posts %}
+    <ul>
+      <li><a href="{{post.get_absolute_url}}">{{post.title}}</a></li>
+    </ul>
+    {% endfor %}
+  </div>
+  <div class="tags">
+    <h1>Tags</h1>
+    {% for tag in tags %}
+    <a href="#">#{{tag.title}}</a>
+    {% endfor %}
+  </div>
+</aside>
+<main>
+  <div class="blog-post">
+      {% for post in posts reversed %}
+    <div class="blog">
+      <h1>
+        <a href="{{post.get_absolute_url}}">
+        {{post.title}}
+        </a>
+      </h1>
+      <p>By <a href="{% url 'profile' username=post.user.username %}">{{post.user.username}}</a>- {{post.published_date}}</p>
+      <img class="image" src="{{post.image.url}}">
+      <hr>
+      {% for tag in post.tag.all %}
+      <a href="#">#{{ tag.title }}</a>
+      {% endfor %}
+      <a href="{{post.get_absolute_url}}#comment-section"> | Comments: {{post.comments.count}}</a>
+    </div>
+    <hr>
+    {% endfor %}
+  </div>
+</main>
+<footer>
+  <p class="footer">Andrew Production</p>
+</footer>
+{% endblock %}
